@@ -59,6 +59,7 @@
     |:--:|
     | *YP overview* |
 3. How does it work:
+
     | ![yp-how-it-works-new-diagram.png](https://www.yoctoproject.org/wp-content/uploads/2017/07/yp-how-it-works-new-diagram.png) |
     |:--:|
     | *yp how it works new diagram* |
