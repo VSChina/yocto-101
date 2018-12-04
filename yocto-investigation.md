@@ -80,7 +80,7 @@
             * Really just another directory to look for recipes in
             * Added to the BBLAYERS variable in build/conf/bblayers.conf
         * BSPs are layers that add machine settings and recipes\
-        * • Machine settings are specified in a layer's conf/machine/xxx.conf file(s)
+        * Machine settings are specified in a layer's conf/machine/xxx.conf file(s)
 
         | ![layers](./layers.png) |
         |:--:|
