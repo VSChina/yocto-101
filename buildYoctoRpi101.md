@@ -262,24 +262,47 @@ pokyuser@892e5d2574d6:/workdir$
 
 ## Flash image to sdcard for raspberry pi
 
-After hours of baking, we can rejoice with the result and the creation of the system image for our target:
+1. Copy image from docker to your PC
 
-```bash
-$ ls rpi-build/tmp/deploy/images/raspberrypi3/*sdimg
-rpi-test-image-raspberrypi3-20181203014212.rootfs.rpi-sdimg  rpi-test-image-raspberrypi3.rpi-sdimg
-```
+    After hours of baking, we can rejoice with the result and the creation of the system image for our target:
 
-`rpi-test-image-raspberrypi3-20181203014212.rootfs.rpi-sdimg` can be used with Win32DiskImager in Windows, while in Linux you can use the `dd` command with the `rpi-test-image-raspberrypi3.rpi-sdimg` directly to flash image to SD card.
+    ```bash
+    $ ls rpi-build/tmp/deploy/images/raspberrypi3/*sdimg
+    rpi-test-image-raspberrypi3-20181203014212.rootfs.rpi-sdimg  rpi-test-image-raspberrypi3.rpi-sdimg
+    ```
 
-Open another powershell terminal and run:
+    `rpi-test-image-raspberrypi3-20181203014212.rootfs.rpi-sdimg` can be used with Win32DiskImager in Windows, while in Linux you can use the `dd` command with the `rpi-test-image-raspberrypi3.rpi-sdimg` directly to flash image to SD card.
 
-```bash
-docker cp 6446fd34ba5e:/workdir/poky/rpi-build/tmp/deploy/images/raspberrypi3/rpi-test-image-raspberrypi3-20181203014212.rootfs.rpi-sdimg [directory in your windows] // Replace 6446fd34ba5e with your samba container ID
-```
+    Open another powershell terminal and run:
 
-Download Win32DiskImager(See [raspberry pi instructions](https://www.raspberrypi.org/documentation/installation/installing-images/windows.md)). Plug in your SD card and you can see two disk device concerning your SD card. One is named `boot`, another is USB drive. From Win32DiskImager choose the `rpi-test-image-raspberrypi3-20181203014212.rootfs.rpi-sdimg` from the directory you have just saved it, and choose the `boot` disk device. Carefully check you choose the right device and click write.
+    ```bash
+    docker cp 6446fd34ba5e:/workdir/poky/rpi-build/tmp/deploy/images/raspberrypi3/rpi-test-image-raspberrypi3-20181203014212.rootfs.rpi-sdimg [directory in your windows] // Replace 6446fd34ba5e with your samba container ID
+    ```
 
-Now you WIN!!! HURRAY!!!
+2. Flash image to SD card
+
+    See [Raspberry pi doc](https://www.raspberrypi.org/documentation/installation/sdxc_formatting.md).
+
+* Format SD card first
+
+    Plug in your SD card and you can see two disk device concerning your SD card. One is named `boot`, another is USB drive. Download SD Format and format the `boot` device.
+
+    Format SD-card before flashing. Or you propabably will get a `"Error 5 access denied error"` when trying to write an image to your SD-card.
+
+* Flash image to SD card
+
+    Download Win32DiskImager(See [raspberry pi instructions](https://www.raspberrypi.org/documentation/installation/installing-images/windows.md)). From Win32DiskImager choose the `rpi-test-image-raspberrypi3-20181203014212.rootfs.rpi-sdimg` from the directory you have just saved it, and choose the `boot` disk device.
+    Carefully check you choose the right device and click write.
+
+3. After you successfully start the system on raspberry pi, you see:
+
+    ```bash
+    raspberrypi3 login:
+    ```
+
+    Input `root` and you can use the system now.
+
+    HURRAY!!!
 
 ## Troubleshooting
 
@@ -310,3 +333,11 @@ docker exec -it samba bash
 cd workdir/poky/rpi-build
 du-h --max-depth=1
 ```
+
+* If you plug in your sd-card which has been succefully wrote the rpi-test-image, and the system boots continuously prints out:
+
+```bash
+init: id "s0" respawning too fast: disabled for 5 minutes
+```
+
+Go back and add `ENABLE_UART = "1"` in local.conf. Re-bake your image and the problem can be solved.
