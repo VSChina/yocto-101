@@ -11,7 +11,7 @@ Tutorial: [Simple Azure IoT Application](https://github.com/VSChina/yocto-101/bl
         16GB
 
     * Time elapsed  
-        11:14 - 11:30: total
+        11:14 - 11:30: total(16 min)
 
 2. Test on Laptop (clean machine, No docker cache)
 
@@ -21,6 +21,6 @@ Tutorial: [Simple Azure IoT Application](https://github.com/VSChina/yocto-101/bl
         16.0GB  
 
     * Time elapsed  
-        11:17 - 11:21  yocto-ubuntu:base  
-        11:21 - 11:26 download toolchain  
-        11:26 - 11:37 download, compile and build libraries; build app
+        11:17 - 11:21  yocto-ubuntu:base(4 min)  
+        11:21 - 11:26 download toolchain(5 min)  
+        11:26 - 11:37 download, compile and build libraries; build app(11 min)
