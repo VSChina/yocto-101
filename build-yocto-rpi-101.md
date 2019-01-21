@@ -3,7 +3,7 @@
 
 ## Purpose of this Document
 
-Check the article [yocto-investigation](./yocto-investigation) to have a brief understanding of Yocto Project. This article is a tutorial to build your first yocto image under Win 10 and run the image on your Raspberry Pi3 hardware.
+Check the article [yocto-investigation](./yocto-investigation.md) to have a brief understanding of Yocto Project. This article is a tutorial to build your first yocto image under Win 10 and run the image on your Raspberry Pi3 hardware.
 
 First we need to set up development environment for our host machine. We install docker since we are developing under Windows system. Then we install the yocto project SDK, modify some configurations and build our simple image. Finally we flash the image to sdcard so it can run on RPI.
 
