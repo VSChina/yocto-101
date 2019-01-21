@@ -1,11 +1,13 @@
-# Build Yocto with Azure
+# Yocto Using Package Management
+
+## Preparation
 
 After following [yocto-quick-start-tutorial](./buildYoctoRpi101), you now have a general understanding of what yocto is about. In this acticle, we will combine yocto with Azure.
 
 Host machine: Windows 10  
 Yocto release: 2.6(master branch)
 
-## Using pacakage Management
+## Package Manager
 
 In several situations, you might need to update, add, remove, or query the packages on a target device at runtime (i.e. without having to generate a new image), then you need a "runtime package management".
 

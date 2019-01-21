@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
 Run the following command to get a wanted cross-compile toolchain.
 
 ```bash
-docker run --rm dockcross/linux-arm64 >./docker-linux-arm64
-PATH=${PWD}:PATH
+docker run --rm dockcross/linux-arm64 >./dockcross-linux-arm64
+PATH=${PWD}:$PATH
 ```
 
 Compile file to get a executable binary, which can run on target machine. Use the command `file` to check the binary's file information.
