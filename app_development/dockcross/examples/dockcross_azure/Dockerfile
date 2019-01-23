@@ -1,25 +1,10 @@
 FROM dockcross/linux-arm64
 
 ENV DEFAULT_DOCKCROSS_IMAGE my_cool_image
-RUN ldd /usr/bin/cmake
-# Run commands that require root authority
-
-# Fetch and install all outstanding updates
-# RUN apt-get update && apt-get -y upgrade
-
-# Install cmake, git, wget and nano
-# #RUN apt-get install -y cmake git wget nano
-
-# # Create a user to use so that we don't run it all as root
-# RUN useradd -d /home/builder -ms /bin/bash -G sudo -p builder builder
-
-# # Switch to new user and change to the user's home directory
-# USER builder
-# WORKDIR /home/builder
 
 # Create a work directory and switch to it
-RUN mkdir MIPSBuild
-WORKDIR MIPSBuild
+RUN mkdir AzureBuild
+WORKDIR AzureBuild
 
 # Download the Azure IoT SDK for C
 RUN git clone --recursive https://github.com/azure/azure-iot-sdk-c.git
@@ -38,7 +23,7 @@ RUN tar -xvf util-linux-2.32-rc2.tar.gz
 
 # Set up environment variables in preparation for the builds to follow
 # These will need to be modified for the corresponding locations in the toolchain being used
-ENV WORK_ROOT=/work/MIPSBuild
+ENV WORK_ROOT=/work/AzureBuild
 ENV TOOLCHAIN_NAME=aarch64-unknown-linux-gnueabi
 ENV NM=${CROSS_ROOT}/bin/${TOOLCHAIN_NAME}-nm
 ENV RANLIB=${CROSS_ROOT}/bin/${TOOLCHAIN_NAME}-ranlib
@@ -59,17 +44,13 @@ RUN make
 RUN make install
 WORKDIR ..
 
-# # Build uuid
+# Build uuid
 WORKDIR util-linux-2.32-rc2
 RUN ./configure --prefix=${QEMU_LD_PREFIX}/usr --with-sysroot=${QEMU_LD_PREFIX} --target=${TOOLCHAIN_NAME} --host=${TOOLCHAIN_NAME} --disable-all-programs  --disable-bash-completion --enable-libuuid
 RUN make
 RUN make install
 WORKDIR ..
 
-# USER builder
-
-# To build the SDK we need to create a cmake toolchain file. This tells cmake to use the tools in the
-# toolchain rather than those on the host
 WORKDIR azure-iot-sdk-c
 
 # Create a working directory for the cmake operations
@@ -107,4 +88,4 @@ RUN cmake -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} ..
 RUN make
 
 # There should be an executable called myapp
-RUN ls -al myapp
+RUN ls -al azure_exe

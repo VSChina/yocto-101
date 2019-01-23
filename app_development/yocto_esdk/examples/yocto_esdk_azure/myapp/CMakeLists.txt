@@ -22,14 +22,14 @@ if(${use_sample_trusted_cert})
 endif()
 
 # Set up the include and library paths
-include_directories($ENV{QEMU_LD_PREFIX}/usr/include/)
-include_directories($ENV{QEMU_LD_PREFIX}/usr/include/azureiot)
-link_directories($ENV{QEMU_LD_PREFIX}/usr/lib)
+include_directories($ENV{TOOLCHAIN_PREFIX}/include/)
+include_directories($ENV{TOOLCHAIN_PREFIX}/include/azureiot)
+link_directories($ENV{TOOLCHAIN_PREFIX}/lib)
 
-add_executable(azure_exe ${iothub_c_files})
+add_executable(azure_app ${iothub_c_files})
 
 # Redundant in this case but shows how to rename your output executable
-set_target_properties(azure_exe PROPERTIES OUTPUT_NAME "azure_exe")
+set_target_properties(azure_app PROPERTIES OUTPUT_NAME "azure_app")
 
 # List the libraries required by the link step
-target_link_libraries(azure_exe iothub_client_mqtt_transport iothub_client umqtt aziotsharedutil parson pthread curl ssl crypto m )
+target_link_libraries(azure_app iothub_client_mqtt_transport iothub_client umqtt aziotsharedutil parson pthread curl ssl crypto m )

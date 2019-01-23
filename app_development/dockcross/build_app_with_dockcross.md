@@ -98,25 +98,10 @@ Create a work directory `azure-app`, which folder structure is as follow. (You c
 FROM dockcross/linux-arm64
 
 ENV DEFAULT_DOCKCROSS_IMAGE my_cool_image
-RUN ldd /usr/bin/cmake
-# Run commands that require root authority
-
-# Fetch and install all outstanding updates
-# RUN apt-get update && apt-get -y upgrade
-
-# Install cmake, git, wget and nano
-# #RUN apt-get install -y cmake git wget nano
-
-# # Create a user to use so that we don't run it all as root
-# RUN useradd -d /home/builder -ms /bin/bash -G sudo -p builder builder
-
-# # Switch to new user and change to the user's home directory
-# USER builder
-# WORKDIR /home/builder
 
 # Create a work directory and switch to it
-RUN mkdir MIPSBuild
-WORKDIR MIPSBuild
+RUN mkdir AzureBuild
+WORKDIR AzureBuild
 
 # Download the Azure IoT SDK for C
 RUN git clone --recursive https://github.com/azure/azure-iot-sdk-c.git
@@ -135,7 +120,7 @@ RUN tar -xvf util-linux-2.32-rc2.tar.gz
 
 # Set up environment variables in preparation for the builds to follow
 # These will need to be modified for the corresponding locations in the toolchain being used
-ENV WORK_ROOT=/work/MIPSBuild
+ENV WORK_ROOT=/work/AzureBuild
 ENV TOOLCHAIN_NAME=aarch64-unknown-linux-gnueabi
 ENV NM=${CROSS_ROOT}/bin/${TOOLCHAIN_NAME}-nm
 ENV RANLIB=${CROSS_ROOT}/bin/${TOOLCHAIN_NAME}-ranlib
@@ -156,17 +141,13 @@ RUN make
 RUN make install
 WORKDIR ..
 
-# # Build uuid
+# Build uuid
 WORKDIR util-linux-2.32-rc2
 RUN ./configure --prefix=${QEMU_LD_PREFIX}/usr --with-sysroot=${QEMU_LD_PREFIX} --target=${TOOLCHAIN_NAME} --host=${TOOLCHAIN_NAME} --disable-all-programs  --disable-bash-completion --enable-libuuid
 RUN make
 RUN make install
 WORKDIR ..
 
-# USER builder
-
-# To build the SDK we need to create a cmake toolchain file. This tells cmake to use the tools in the
-# toolchain rather than those on the host
 WORKDIR azure-iot-sdk-c
 
 # Create a working directory for the cmake operations
@@ -238,13 +219,13 @@ include_directories($ENV{QEMU_LD_PREFIX}/usr/include/)
 include_directories($ENV{QEMU_LD_PREFIX}/usr/include/azureiot)
 link_directories($ENV{QEMU_LD_PREFIX}/usr/lib)
 
-add_executable(myapp ${iothub_c_files})
+add_executable(azure_exe ${iothub_c_files})
 
 # Redundant in this case but shows how to rename your output executable
-set_target_properties(myapp PROPERTIES OUTPUT_NAME "myapp")
+set_target_properties(azure_exe PROPERTIES OUTPUT_NAME "azure_exe")
 
 # List the libraries required by the link step
-target_link_libraries(myapp iothub_client_mqtt_transport iothub_client umqtt aziotsharedutil parson pthread curl ssl crypto m )
+target_link_libraries(azure_exe iothub_client_mqtt_transport iothub_client umqtt aziotsharedutil parson pthread curl ssl crypto m )
 ```
 
 * myapp/iothub_convenience_sample.c
@@ -264,6 +245,6 @@ Run the image to compile application and get executable binary file.
 ```bash
 CID=$(docker create dockcross-extended)
 mkdir my_exe/
-docker cp $CID:/work/MIPSBuild/myapp/cmake/myapp my_exe/
+docker cp $CID:/work/AzureBuild/myapp/cmake/myapp my_exe/
 file my_exe/myapp
 ```
