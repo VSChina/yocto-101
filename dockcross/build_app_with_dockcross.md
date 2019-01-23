@@ -8,14 +8,13 @@ Dockcross is several cross-compile toolchains in Docker images developed and mai
 
 ## Build a Hello-world Application
 
-Create a work directory `hello-world`, which folder structure is as follow.
+Create a work directory `hello-world`, which folder structure is as follow. (You can download the code directly from [here](./examples/dockcross_hello/).)
 
 ```bash
 .
 ├── compile.sh
 ├── my_app
-│   └── hello
-│       └── hello.c
+│   └── hello.c
 └── my_exe
 ```
 
@@ -73,7 +72,7 @@ PATH=${PWD}:$PATH
 Compile file to get a executable binary, which can run on target machine. Use the command `file` to check the binary's file information.
 
 ```bash
-sh ./compile.sh hello.c my_exe/
+sh ./compile.sh my_app/hello.c my_exe/
 file my_exe/hello
 ```
 
@@ -83,7 +82,7 @@ Copy the `hello` binary file to raspberry pi target machine, and test the execut
 
 ### Edit File to Develop Application
 
-Create a work directory `azure-app`, which folder structure is as follow.
+Create a work directory `azure-app`, which folder structure is as follow. (You can download the code directly from [here](./examples/dockcross_azure/).)
 
 ```bash
 .
@@ -250,7 +249,7 @@ target_link_libraries(myapp iothub_client_mqtt_transport iothub_client umqtt azi
 
 * myapp/iothub_convenience_sample.c
 
-Use the azure iot c sdk iothub sample file iothub_convenience_sample.c. Replace the "connectionString" in the file with your own iothub connectionString.
+Use the azure iot c sdk iothub sample file  [iothub_convenience_sample.c](https://github.com/Azure/azure-iot-sdk-c/blob/master/iothub_client/samples/iothub_convenience_sample/iothub_convenience_sample.c). Replace the "connectionString" in the file with your own iothub connectionString.
 
 ### Build Docker Image
 
