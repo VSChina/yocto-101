@@ -481,7 +481,6 @@ On our host machine, create a clean directory with a Dockerfile and a folder nam
     You may have chose a wrong target for your cross-compilation toolchain. Make sure your target hardware architecture is aarch64 if you use `aarch64-poky-linux` cross-compiler.
 
 * Cannot open shared object file, Error 40
-
     As mentioned above, we may need to copy needed binaries to get the myapp be able to run on target machine. If you run `./myapp` on target machine and get:
 
     ```shell
@@ -502,6 +501,7 @@ On our host machine, create a clean directory with a Dockerfile and a folder nam
     root@raspberrypi3-64:~/dilin/my-sample-application# ln -s /home/root/dilin/my-sample-application/libcrypto.so.1.0.0 /usr/lib/libcrypto.so.1.0.0
     root@raspberrypi3-64:~/dilin# ls -l /usr/lib/libcrypto.so.1.0.0
     lrwxrwxrwx    1 root     root            35 Dec 23 08:36 /usr/lib/libcrypto.so.1.0.0 -> /home/root/dilin/my-sample-application/libcrypto.so.1.0.0
+
     ```
 
 * Cannot open shared object file: No such file or directory
@@ -533,3 +533,4 @@ On our host machine, create a clean directory with a Dockerfile and a folder nam
     ```
 
     In this way, the application can find its needed shared libraries.
+
