@@ -480,8 +480,7 @@ On our host machine, create a clean directory with a Dockerfile and a folder nam
 
     You may have chose a wrong target for your cross-compilation toolchain. Make sure your target hardware architecture is aarch64 if you use `aarch64-poky-linux` cross-compiler.
 
-* Copy dependent library along with the executable file
-
+* Cannot open shared object file, Error 40
     As mentioned above, we may need to copy needed binaries to get the myapp be able to run on target machine. If you run `./myapp` on target machine and get:
 
     ```shell
@@ -502,4 +501,36 @@ On our host machine, create a clean directory with a Dockerfile and a folder nam
     root@raspberrypi3-64:~/dilin/my-sample-application# ln -s /home/root/dilin/my-sample-application/libcrypto.so.1.0.0 /usr/lib/libcrypto.so.1.0.0
     root@raspberrypi3-64:~/dilin# ls -l /usr/lib/libcrypto.so.1.0.0
     lrwxrwxrwx    1 root     root            35 Dec 23 08:36 /usr/lib/libcrypto.so.1.0.0 -> /home/root/dilin/my-sample-application/libcrypto.so.1.0.0
+
     ```
+
+* Cannot open shared object file: No such file or directory
+
+    ```shell
+    root@raspberrypi3-64:~/dilin/my-sample-application# ./myapp
+    ./myapp: error while loading shared libraries: libssl.so.1.0.0: cannot open shared object file: No such file or directory
+    ```
+
+    In this situation, try installing coresponding libraries on target machine's image. Assume this error message ocurrs for libssl, libcurl and libcrpto. Method is as follow.
+
+    (1) Edit conf/local.conf on your yocto image build machine:
+
+    ```bash
+    EXTRA_IMAGE_FEATURES ?= "debug-tweaks ssh-server-openssh"
+    IMAGE_INSTALL_append = " packagegroup-core-ssh-openssh openssh-sftp-server openssl10 libssl10 libcrypto curl libcurl zlib"
+    ```
+
+    The above setting installs libssl, libcurl and libcrypto.
+
+    (2) Bitbake Image.
+
+    (3) Modify libraries to meet version requirement.
+
+    Run the new image on target machine, check the libraries not found when executating myapp. For example, if you have `libssl.so.1.0.2` under target machine's `/usr/lib/` directory, but error message indicate `libssl.1.0.0` is needed. Run the following command on target machine.
+
+    ```bash
+    root@raspberrypi3-64:/usr/lib# ln -s libssl.so.1.0.2 libssl.so.1.0.0
+    ```
+
+    In this way, the application can find its needed shared libraries.
+
