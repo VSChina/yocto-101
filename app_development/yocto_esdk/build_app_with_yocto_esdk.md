@@ -503,7 +503,7 @@ On our host machine, create a clean directory with a Dockerfile and a folder nam
     lrwxrwxrwx    1 root     root            35 Dec 23 08:36 /usr/lib/libcrypto.so.1.0.0 -> /home/root/dilin/my-sample-application/libcrypto.so.1.0.0
 
     ```
-
+    
 * Cannot open shared object file: No such file or directory
 
     ```shell
@@ -526,11 +526,11 @@ On our host machine, create a clean directory with a Dockerfile and a folder nam
 
     (3) Modify libraries to meet version requirement.
 
-    Run the new image on target machine, check the libraries not found when executating myapp. For example, if you have `libssl.so.1.0.2` under target machine's `/usr/lib/` directory, but error message indicate `libssl.1.0.0` is needed. Run the following command on target machine.
+    Run the new image on target machine, check the libraries not found when executing myapp. For example, if you have `libssl.so.1.0.2` and `libcryrto.so.1.0.2` under target machine's `/usr/lib/` directory, but error message indicates `libssl.1.0.0` and `libcrypto.so.1.0.0` is needed.Run the following command on target machine.
 
     ```bash
     root@raspberrypi3-64:/usr/lib# ln -s libssl.so.1.0.2 libssl.so.1.0.0
+    root@raspberrypi3-64:/usr/lib# ln -s libcrypto.so.1.0.2 libcrypto.so.1.0.0
     ```
 
     In this way, the application can find its needed shared libraries.
-
