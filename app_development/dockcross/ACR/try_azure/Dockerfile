@@ -1,4 +1,4 @@
-FROM lindisjtu/dockcross_azure:latest
+FROM devicedevex.azurecr.io/azure-sdk:latest
 
 WORKDIR /work/AzureBuild
 COPY azureIoT  /work/AzureBuild/azureIoT
