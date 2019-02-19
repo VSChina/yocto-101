@@ -1,4 +1,4 @@
-FROM devicedevex.azurecr.io/azure-sdk:latest
+FROM devicedevex.azurecr.io/public/azure-sdk:latest
 
 WORKDIR /work/AzureBuild
 COPY azureIoT  /work/AzureBuild/azureIoT
