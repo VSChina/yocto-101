@@ -50,4 +50,4 @@ RUN wget https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.32/util-l
 
 # Azure-sdk-c-pnp
 # Replace proper <my-token> before building this Dockerfile
-RUN git clone -b private-preview --recursive https://dilin-MS:4e1ed59b5077f26a3167e440315771b013d75312@github.com/dilin-MS/azure-iot-sdk-c-pnp
+RUN git clone -b private-preview --recursive https://dilin-MS:<my-token>/dilin-MS/azure-iot-sdk-c-pnp
