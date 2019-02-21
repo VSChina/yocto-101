@@ -1,4 +1,4 @@
-# base docker image for azure-c-sdk-pnp library(preview)
+# base docker image for azure-c-sdk library
 FROM dockcross/linux-arm64
 
 ENV DEFAULT_DOCKCROSS_IMAGE my_cool_image
@@ -46,14 +46,18 @@ RUN wget https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.32/util-l
     rm ${WORK_ROOT}/util-linux-2.32-rc2.tar.gz && \
     rm -rf ${WORK_ROOT}/util-linux-2.32-rc2
 
-# Azure-sdk-c-pnp
-# Replace proper <my-token> before building this Dockerfile
-RUN git clone -b private-preview --recursive https://dilin-MS:<my-token>@github.com/dilin-MS/azure-iot-sdk-c-pnp && \
-    cd azure-iot-sdk-c-pnp && \
-    mkdir cmake && \
-    cd cmake && \
-    cmake -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} -DCMAKE_INSTALL_PREFIX=${QEMU_LD_PREFIX}/usr .. -Duse_prov_client=ON -Dhsm_type_symm_key:BOOL=ON && \
-    make && \
-    make install && \
-    ls -al ${QEMU_LD_PREFIX}/usr/lib && \
-    ls -al ${QEMU_LD_PREFIX}/usr/include
+# Azure-sdk-c
+# Just download the sdk but not build it. Build the sdk with application later in user's app Dockfile.
+RUN git clone --recursive https://github.com/azure/azure-iot-sdk-c.git
+
+# RUN git clone --recursive https://github.com/azure/azure-iot-sdk-c.git && \
+#     cd azure-iot-sdk-c && \
+#     mkdir cmake && \
+#     cd cmake && \
+#     cmake -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} -DCMAKE_INSTALL_PREFIX=${QEMU_LD_PREFIX}/usr .. && \
+#     make && \
+#     make install && \
+#     ls -al ${QEMU_LD_PREFIX}/usr/lib && \
+#     ls -al ${QEMU_LD_PREFIX}/usr/include
+
+# RUN ls -al ${QEMU_LD_PREFIX}/usr/include/azureiot/
