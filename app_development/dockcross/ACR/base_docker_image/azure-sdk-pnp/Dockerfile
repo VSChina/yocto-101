@@ -1,10 +1,13 @@
+# base docker image for azure-c-sdk-pnp library(preview)
+# Replace proper <my-token> before building this Dockerfile
+
 FROM dockcross/linux-arm64
 
-ENV DEFAULT_DOCKCROSS_IMAGE my_cool_image
+ENV DEFAULT_DOCKCROSS_IMAGE azure-sdk-pnp
 
 # Create a work directory and switch to it
-RUN mkdir AzureBuild
-WORKDIR AzureBuild
+RUN mkdir /work/AzureBuild
+WORKDIR /work/AzureBuild
 
 # Set up environment variables in preparation for the builds to follow
 # These will need to be modified for the corresponding locations in the toolchain being used
@@ -45,13 +48,6 @@ RUN wget https://mirrors.edge.kernel.org/pub/linux/utils/util-linux/v2.32/util-l
     rm ${WORK_ROOT}/util-linux-2.32-rc2.tar.gz && \
     rm -rf ${WORK_ROOT}/util-linux-2.32-rc2
 
-# Azure-sdk-c
-RUN git clone --recursive https://github.com/azure/azure-iot-sdk-c.git && \
-    cd azure-iot-sdk-c && \
-    mkdir cmake && \
-    cd cmake && \
-    cmake -DCMAKE_TOOLCHAIN_FILE=${CMAKE_TOOLCHAIN_FILE} -DCMAKE_INSTALL_PREFIX=${QEMU_LD_PREFIX}/usr .. && \
-    make && \
-    make install && \
-    ls -al ${QEMU_LD_PREFIX}/usr/lib && \
-    ls -al ${QEMU_LD_PREFIX}/usr/include
+# Azure-sdk-c-pnp
+# Replace proper <my-token> before building this Dockerfile
+RUN git clone -b private-preview --recursive https://dilin-MS:<my-token>/dilin-MS/azure-iot-sdk-c-pnp
