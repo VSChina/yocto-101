@@ -49,7 +49,7 @@
 #endif // SET_TRUSTED_CERT_IN_SAMPLES
 
 /* Paste in your device connection string  */
-static const char* connectionString = "HostName=dilin-test-iothub.azure-devices.net;DeviceId=device1;SharedAccessKey=zZnsRM7MUqmAapuw349jwFogBjMt5G6VV+EwOJGPxd8=";
+static const char* connectionString = "[connectionstring]";
 
 #define MESSAGE_COUNT        5
 static bool g_continueRunning = true;
