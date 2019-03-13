@@ -45,7 +45,7 @@ This article introduce our practice to reduce docker image's size. Here we go!
         apt-get install -y <package-A> <package-B>
     ```
 
-3. Better Handle the Packages Install Thing
+3. Better Handle the Packages Installation Thing
 
     ```bash
     # If you are on ubuntu and thus using `apt-get` as the package manager
@@ -78,11 +78,40 @@ This article introduce our practice to reduce docker image's size. Here we go!
 
 After applying the best practice of writing the Dockerfile, we successfully reduce our docker image's actual disk usage by 390MB, now the alpine-azure-app docker image has a size of 1.114GB(*1GB=1000MB here). Is it enough? Does a docker image with a size of 1.114GB meet our customers' needs and how's the performance? To figure out the painpoint between size and internet transmission, we do the following investigation.
 
-1. Current Status
+1. Get the compressed size of docker image
 
+* Enable docker experimental features  
+    Edit `~/.docker/config.json` file and set `experimental` to `enable`. We enable docker's experimental features in order to use the `docker manifest` command.
+
+    ```bash
+    # ~/.docker/config.json
+    "experimental": "enabled"
+    ```
+
+* Gain compressed size of docker images which we host on ACR.
+
+    ```bash
+    docker manifest inspect -v devicedevex.azurecr.io/alpine-azure-sdk | grep size | awk -F ':' '{sum+=$NF} END {print sum}' | numfmt --to=iec-i
+    ```
+
+    For docker image on DockerHub, simply use the below command to get its compressed size. The below command is an example to calculate the compressed size of `alpine:latest`. Replace image name and tag to get the image size you want.
+
+    ```bash
+    curl -s -H "Authorization: JWT ${TOKEN}" "https://hub.docker.com/v2/repositories/library/alpine/tags/?page_size=100" | jq -r '.results[] | select(.name == "latest") | .images[0].size' | numfmt --to=iec-i
+    ```
+
+    The reason that we use different parse schema for different registry is that different registries store docker image's manifest file in a different way.
+
+* Compare our docker images' size
+
+| Image       | Compressed Size  | Decompressed Size |
+| :------------- |:-------------:|:-------------: |
+| `devicedevex.azurecr.io/alpine-linux-arm64` | `213Mi` |  |
+| `devicedevex.azurecr.io/alpine-azure-sdk` | `370Mi` |  |
 
 ## Reference
 
 * [Tips to Reduce Docker Image Sizes](https://hackernoon.com/tips-to-reduce-docker-image-sizes-876095da3b34)
 * [Reduce Docker image sizes using Alpine](https://www.sandtable.com/reduce-docker-image-sizes-using-alpine/)
 * [Best practices for writing Dockerfiles](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/)
+* [docker manifest inspect](https://docs.docker.com/engine/reference/commandline/manifest_inspect/)
