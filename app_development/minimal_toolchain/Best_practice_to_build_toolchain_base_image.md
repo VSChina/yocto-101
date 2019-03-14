@@ -80,34 +80,47 @@ After applying the best practice of writing the Dockerfile, we successfully redu
 
 1. Get the compressed size of docker image
 
-* Enable docker experimental features  
-    Edit `~/.docker/config.json` file and set `experimental` to `enable`. We enable docker's experimental features in order to use the `docker manifest` command.
+    * Enable docker experimental features  
+        Edit `~/.docker/config.json` file and set `experimental` to `enable`. We enable docker's experimental features in order to use the `docker manifest` command.
 
-    ```bash
-    # ~/.docker/config.json
-    "experimental": "enabled"
-    ```
+        ```bash
+        # ~/.docker/config.json
+        "experimental": "enabled"
+        ```
 
-* Gain compressed size of docker images which we host on ACR.
+    * Gain compressed size of docker images which we host on ACR.
 
-    ```bash
-    docker manifest inspect -v devicedevex.azurecr.io/alpine-azure-sdk | grep size | awk -F ':' '{sum+=$NF} END {print sum}' | numfmt --to=iec-i
-    ```
+        ```bash
+        docker manifest inspect -v devicedevex.azurecr.io/alpine-azure-sdk | grep size | awk -F ':' '{sum+=$NF} END {print sum}' | numfmt --to=iec-i
+        ```
 
-    For docker image on DockerHub, simply use the below command to get its compressed size. The below command is an example to calculate the compressed size of `alpine:latest`. Replace image name and tag to get the image size you want.
+        For docker image on DockerHub, simply use the below command to get its compressed size. The below command is an example to calculate the compressed size of `alpine:latest`. Replace image name and tag to get the image size you want.
 
-    ```bash
-    curl -s -H "Authorization: JWT ${TOKEN}" "https://hub.docker.com/v2/repositories/library/alpine/tags/?page_size=100" | jq -r '.results[] | select(.name == "latest") | .images[0].size' | numfmt --to=iec-i
-    ```
+        ```bash
+        curl -s -H "Authorization: JWT ${TOKEN}" "https://hub.docker.com/v2/repositories/library/alpine/tags/?page_size=100" | jq -r '.results[] | select(.name == "latest") | .images[0].size' | numfmt --to=iec-i
+        ```
 
-    The reason that we use different parse schema for different registry is that different registries store docker image's manifest file in a different way.
+        The reason that we use different parse schema for different registry is that different registries store docker image's manifest file in a different way.
 
-* Compare our docker images' size
+    * Compare our docker images' size
 
-| Image       | Compressed Size  | Decompressed Size |
-| :------------- |:-------------:|:-------------: |
-| `devicedevex.azurecr.io/alpine-linux-arm64` | `213Mi` |  |
-| `devicedevex.azurecr.io/alpine-azure-sdk` | `370Mi` |  |
+    | Image       | Compressed Size  | Decompressed Size |
+    | :------------- |:-------------:|:-------------: |
+    | devicedevex.azurecr.io/alpine-linux-arm64 | 222MB(213Mi) | 796MB(760Mi) |
+    | devicedevex.azurecr.io/alpine-azure-sdk | 388MB(370Mi) | 1.06GB(1008MiB) |
+
+2. Comparison
+
+    From the former step, we know that our optimization is rather good. User needs to pull a docker image of compressed size 370Mi if he wants to use our tool to build his application. If the user's internet speed is 10MBps(transfer `10 * 1024 * 1024` Bytes per second), then he needs `370 * 1024 * 1024 / (10 * 1024 * 1024) = 37s` to donwload our base image.  
+    In case our customer has poor internet speed, let's use a Plan B to lighten our base image, making it only handle preparing environment job, whcich can cut down base image's size and the image download time can be reduced. On the other hand, local build time will increase. We transfer the tool build time to local build runtime.
+
+    Let's compare these two methods disk usage and total time consumption.
+
+    | Scheme | Base Image Compressed Size  | Base Image Download Time<br/>(Internet Speed: 10MBps) | Local Disk Usage | Local Build Time* |
+    | :------------- |:-------------:|:-------------: |:-------------: |:-------------: |
+    | base image: **Donwload** and **extract** cross-compile toolchain. Build Azure-sdk dependencies with the toolchain(openssl, curl, uuid) <br/>user image: Compile user appication with Azure SDK   | `alpine-linux-arm64`: 222MB(213Mi)<br/>`alpine-azure-sdk`: 388MB(370Mi) | 37s | `alpine-linux-arm64`: 796MB(760Mi) <br/>`alpine-azure-sdk`: 1.06GB(0.984GiB) <br/>`alpine-azure-app`: 1.11GB(1.03GiB) |  |
+    | base image: **Donwload** cross-compile toolchain <br/>user image: **Extract** toolchain. Build  Azure-sdk dependencies. Compile user appication with Azure SDK | `lighter-linux-arm64`: 123MB(118Mi) <br/>`lighter-azure-sdk`: 281MB(268Mi) | 26.8s<br/>(Reduced time by 33%) | `lighter-linux-arm64`: 129MB(123Mi) <br/>`lighter-azure-sdk`: 366MB(350Mi) <br/>`lighter-azure-app`: 1.26GB(1.17GiB) <br/>(Size **increased** by 150MB(149Mi)) |  |
+    (* Test Machine: Thinkpad Carbon X1 Yoga)
 
 ## Reference
 
