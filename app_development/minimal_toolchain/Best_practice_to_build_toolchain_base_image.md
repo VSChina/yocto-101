@@ -118,7 +118,7 @@ After applying the best practice of writing the Dockerfile, we successfully redu
 
     | Scheme | Description | Base Image Compressed Size | Local Disk Usage | Thinkpad Carbon X1 Yoga | Workstation |
     | :-------------| :------------- |:-------------:|:-------------: |:-------------: |:-------------: |
-    | **Original version** | base image: **Donwload** and **extract** cross-compile toolchain. Build Azure-sdk dependencies with the toolchain(openssl, curl, uuid) <br/>user image: Compile user appication with Azure SDK   | `alpine-linux-arm64`: 222MB(213Mi)<br/>`alpine-azure-sdk`: 388MB(370Mi) | `alpine-linux-arm64`: 796MB(760Mi) <br/>`alpine-azure-sdk`: 1.06GB(0.984GiB) <br/>`alpine-azure-app`: 1.11GB(1.03GiB) | **Total**: 14min<br/>**download base image**: 11min <br/>**build time**: 3min11s |  |
+    | **Original version** | base image: **Donwload** and **extract** cross-compile toolchain. Build Azure-sdk dependencies with the toolchain(openssl, curl, uuid) <br/>user image: Compile user appication with Azure SDK   | `alpine-linux-arm64`: 222MB(213Mi)<br/>`alpine-azure-sdk`: 388MB(370Mi) | `alpine-linux-arm64`: 796MB(760Mi) <br/>`alpine-azure-sdk`: 1.06GB(0.984GiB) <br/>`alpine-azure-app`: 1.11GB(1.03GiB) | **Total**: 14min<br/>**download base image**: 11min <br/>**build time**: 3min11s | **download base image**: 1min <br/>**build time**: 3min |
     | **Lighter version** | base image: **Donwload** cross-compile toolchain <br/>user image: **Extract** toolchain. Download and build  Azure-sdk dependencies. Compile user appication with Azure SDK | `lighter-linux-arm64`: 123MB(118Mi) <br/>`lighter-azure-sdk`: 281MB(268Mi) | `lighter-linux-arm64`: 129MB(123Mi) <br/>`lighter-azure-sdk`: 366MB(350Mi) <br/>`lighter-azure-app`: 1.26GB(1.17GiB) <br/>(Size **increased** by 150MB(149Mi)) | **Total**: 15min<br/>**download base image**: 8min <br/>**build dependencies**: 5min <br/>**build azure sdk and app**: 3min | **download base image**: 40s <br/>**build time**: 8min |
     | **Lighter version2** | base image: **Donwload** cross-compile toolchain and dependencies <br/>user image: **Extract** toolchain. Build  Azure-sdk dependencies. Compile user appication with Azure SDK | `lighter-azure-sdk2`: 281MB(268Mi) | `lighter-azure-sdk2`: 385MB(367Mi) | | **build time**: Around 8min|
 
@@ -145,7 +145,9 @@ After applying the best practice of writing the Dockerfile, we successfully redu
 
     2. Lighter version: Base image is smaller and thus base image pull time can be reduced by 27%, around 3min. But it takes too long to build application every time, around 8min.
 
-    3. 
+    3. Lighter version2: Download Azure SDK dependencies in advance. Time is roughly the same as lighter version.
+
+    In a nut shell, original version is better since base image size(370Mi) is acceptable. Extracting toolchain and build dependencies every application build time gives bad performance(8 min every time).
 
 
 
