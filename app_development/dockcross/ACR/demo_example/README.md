@@ -124,12 +124,22 @@ file ./bme_project
     ENABLE_I2C = "1"
     ```
 
-    On RPI3, test i2c can work properly.
+    On RPI3, test whether i2c can work properly:
 
     ```bash
     root@raspberrypi3-64:~/dilin# lsmod | grep i2c
     i2c_dev                20480  0
+    ```
 
+    > If this command does not give out `i2c-dev` as a result, execute:
+    >
+    > ```bash
+    > modprobe i2c-dev
+    > ```
+    >
+    > This command adds `i2c-dev` as a module in the device, so i2c-tools can recognize i2c devices.
+
+    ```bash
     root@raspberrypi3-64:~/dilin# i2cdetect -l
     i2c-1   i2c             bcm2835 I2C adapter                     I2C adapter
     i2c-2   i2c             bcm2835 I2C adapter                     I2C adapter
