@@ -32,7 +32,7 @@ RUN apk add --no-cache perl make cmake git && \
     rm /work/util-linux-2.32-rc2.tar.gz && \
     rm -rf /work/util-linux-2.32-rc2 && \
     cd .. && \
-    git clone -b private-preview --recursive https://dilin-MS:c16f01216eda0613442181c794362d7341c01f8c@github.com/Azure/azure-iot-sdk-c-pnp && \
+    git clone -b private-preview --recursive https://dilin-MS:<token>@github.com/Azure/azure-iot-sdk-c-pnp && \
     cd azure-iot-sdk-c-pnp && \
     mkdir cmake && \
     cd cmake && \
