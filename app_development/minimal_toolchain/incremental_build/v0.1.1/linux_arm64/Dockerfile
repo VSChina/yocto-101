@@ -1,5 +1,5 @@
-# lighter-linux-arm64 image
-FROM frolvlad/alpine-glibc
+# devicedevex.azurecr.io/linux-arm64:0.1.1
+FROM frolvlad/alpine-glibc:glibc-2.28
 
 # Download toolchain
 RUN mkdir -p /usr/xcc
